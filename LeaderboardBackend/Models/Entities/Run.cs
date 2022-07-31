@@ -36,4 +36,15 @@ public class Run
 
 	[Required]
 	public List<Participation>? Participations { get; set; }
+
+	/// <summary>
+	/// 	The ID of the `Category` for the `Run`.
+	/// </summary>
+	[Required]
+	public long CategoryId { get; set; }
+
+	/// <summary>
+	/// 	Relationship model for `CategoryId`.
+	/// </summary>
+	public Category? Category { get; set; }
 }

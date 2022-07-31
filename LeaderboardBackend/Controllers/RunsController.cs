@@ -12,11 +12,13 @@ public class RunsController : ControllerBase
 {
 	private readonly IRunService RunService;
 	private readonly IParticipationService ParticipationService;
+	private readonly ICategoryService _categoryService;
 
-	public RunsController(IRunService runService, IParticipationService participationService)
+	public RunsController(IRunService runService, IParticipationService participationService, ICategoryService categoryService)
 	{
 		RunService = runService;
 		ParticipationService = participationService;
+		_categoryService = categoryService;
 	}
 
 	/// <summary>Gets a Run.</summary>
@@ -48,6 +50,7 @@ public class RunsController : ControllerBase
 			Played = request.Played,
 			Submitted = request.Submitted,
 			Status = request.Status,
+			CategoryId = request.CategoryId
 		};
 
 		await RunService.CreateRun(run);
@@ -77,5 +80,32 @@ public class RunsController : ControllerBase
 		}
 
 		return Ok(participations);
+	}
+
+	/// <summary>
+	/// 	Gets the Category of a Run.
+	/// </summary>
+	/// <param name="id">The run ID.</param>
+	/// <response code="200">The `Category` was found and returned successfully.</response>
+	/// <response code="404">The `Run` or the `Category` was not found.</response>
+	[ApiConventionMethod(typeof(Conventions),
+						 nameof(Conventions.Get))]
+	[HttpGet("{id}/category")]
+	public async Task<ActionResult<Category>> GetRunCategory(Guid id)
+	{
+		Run? run = await RunService.GetRun(id);
+		if (run is null)
+		{
+			return NotFound("Run not found");
+		}
+
+		Category? category = await _categoryService.GetCategoryByRun(run);
+
+		if (category is null)
+		{
+			return NotFound("Category not found");
+		}
+
+		return Ok(category);
 	}
 }

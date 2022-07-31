@@ -14,4 +14,10 @@ public record CreateRunRequest
 
 	[Required]
 	public RunStatus Status { get; set; }
+
+	/// <summary>
+	/// 	The ID of the `Category` for the `Run`.
+	/// </summary>
+	[Required]
+	public long CategoryId { get; set; }
 }

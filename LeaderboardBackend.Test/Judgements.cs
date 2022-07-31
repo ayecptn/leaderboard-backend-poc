@@ -21,6 +21,7 @@ internal class Judgements
 	private static readonly string ValidUsername = "Test";
 	private static readonly string ValidPassword = "c00l_pAssword";
 	private static readonly string ValidEmail = "test@email.com";
+	private static long _categoryId;
 
 	[SetUp]
 	public static async Task SetUp()
@@ -59,6 +60,20 @@ internal class Judgements
 				Jwt = adminJwt,
 			}
 		);
+		Category createdCategory = await ApiClient.Post<Category>(
+				"/api/categories",
+				new()
+				{
+					Body = new CreateCategoryRequest()
+					{
+						Name = Generators.GenerateRandomString(),
+						Slug = Generators.GenerateRandomString(),
+						LeaderboardId = DefaultLeaderboard.Id,
+					},
+					Jwt = adminJwt,
+				}
+			);
+		_categoryId = createdCategory.Id;
 
 		Jwt = (await ApiClient.LoginUser(ValidEmail, ValidPassword)).Token;
 	}
@@ -96,6 +111,7 @@ internal class Judgements
 					Played = NodaTime.Instant.MinValue,
 					Submitted = NodaTime.Instant.MaxValue,
 					Status = RunStatus.SUBMITTED,
+					CategoryId = _categoryId
 				},
 				Jwt = Jwt,
 			}

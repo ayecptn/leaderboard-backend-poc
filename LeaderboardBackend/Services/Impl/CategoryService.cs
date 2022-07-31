@@ -21,4 +21,9 @@ public class CategoryService : ICategoryService
 		ApplicationContext.Categories.Add(category);
 		await ApplicationContext.SaveChangesAsync();
 	}
+
+	public async Task<Category?> GetCategoryByRun(Run run)
+	{
+		return await ApplicationContext.Categories.FindAsync(run.CategoryId);
+	}
 }
